@@ -73,17 +73,52 @@ class ParticleSystem {
             console.warn(`Invalid container "${containerSelector}"!`);
         } 
 
+        this.isMobile = window.matchMedia('(max-width: 768px)').matches;
+
         this.options = {
-            count: options.count || 50,
+            count: this.isMobile ? 25 : options.count || 50,
             minDuration: options.minDuration || 3000,
             maxDuration: options.maxDuration || 8000,
-            maxDistance: options.maxDistance || 200,
+            maxDistance: this.isMobile ? 100 : options.maxDistance || 200,
         };
+
+        this.checkDevicePerformance();
 
         this.particles = new Set();
         this.resizeObserver = null;
         this.bounds = null;
         this.isDestroyed = false;
+    }
+
+    checkDevicePerformance() {
+        if (!window.requestAnimationFrame) {
+            this.options.count = Math.floor(this.options.count / 2);
+            return;
+        }
+        // check fpsow dla low end(gówno) sprzętów
+        let frames = 0;
+        let lastTime = performance.now();
+
+        const checkFrame = () => {
+            frames++;
+            const currentTime = performance.now();
+
+            if (currentTime - lastTime >= 1000) {
+                const fps = frames * 1000 / (currentTime - lastTime);
+
+                if (fps < 30) {
+                    this.options.count = Math.floor(this.options.count / 2);
+                    console.log("fps dropped below 30, new value",fps)
+                }
+
+                return;
+
+            };
+
+            requestAnimationFrame(checkFrame);
+        };
+
+        requestAnimationFrame(checkFrame);
     }
 
     init() {
@@ -162,10 +197,16 @@ class ParticleSystem {
 }
 
 const particleSystem = new ParticleSystem(".particles", {
-    count: 50,
+    count: 75,
     minDuration: 3000,
     maxDuration: 8000,
     maxDistance: 200,
 });
+
+// dev
+document.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+}, { passive: false });
+
 
 particleSystem.init();
