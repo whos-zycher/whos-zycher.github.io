@@ -114,7 +114,7 @@ body {
 }
 
 .name::after {
-    content: '/>';
+    content: '/\200B>'; /* zero width space as firefox changes it to an arrow */
     color: var(--accent-primary);
     opacity: 0.6;
     margin-left: 0.5rem;
