@@ -76,10 +76,10 @@ class ParticleSystem {
         this.isMobile = window.matchMedia('(max-width: 768px)').matches;
 
         this.options = {
-            count: this.isMobile ? 25 : options.count || 50,
+            count: this.isMobile ? 0 : options.count || 50,
             minDuration: options.minDuration || 3000,
             maxDuration: options.maxDuration || 8000,
-            maxDistance: this.isMobile ? 100 : options.maxDistance || 200,
+            maxDistance: options.maxDistance || 200,
         };
 
         this.checkDevicePerformance();
@@ -197,7 +197,7 @@ class ParticleSystem {
 }
 
 const particleSystem = new ParticleSystem(".particles", {
-    count: 75,
+    count: 50,
     minDuration: 3000,
     maxDuration: 8000,
     maxDistance: 200,
